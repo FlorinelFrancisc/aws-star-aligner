@@ -1,28 +1,45 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  S3Bucket:
+  StarAlignerBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName:
         Fn::Sub: star-aligner-files-${AWS::AccountId}
     Metadata:
-      SamResourceId: S3Bucket
+      SamResourceId: StarAlignerBucket
   StarAlignerBatchExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: StarAlignerBatchExecutionRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
         - Effect: Allow
           Principal:
             Service:
-            - ecs-tasks.amazonaws.com
+            - batch.amazonaws.com
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
-      - arn:aws:iam::aws:policy/CloudWatchFullAccess
+      - arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole
     Metadata:
       SamResourceId: StarAlignerBatchExecutionRole
+  StarAlignerBatchComputeEnvironment:
+    Type: AWS::Batch::ComputeEnvironment
+    Properties:
+      ComputeEnvironmentName: StarAlignerComputeEnvironment
+      Type: MANAGED
+      ServiceRole:
+        Fn::GetAtt:
+        - StarAlignerBatchExecutionRole
+        - Arn
+      ComputeResources:
+        Type: FARGATE
+        MaxvCpus: 16
+        Subnets:
+        - subnet-0639d80feade9df54
+        - subnet-02d9a3801a1a594c9
+        SecurityGroupIds:
+        - sg-0d680c8c9b336d91b
+    Metadata:
+      SamResourceId: StarAlignerBatchComputeEnvironment
