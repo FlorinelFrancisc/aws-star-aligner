@@ -16,10 +16,12 @@ Resources:
           Principal:
             Service:
             - batch.amazonaws.com
+            - ecs-tasks.amazonaws.com
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
       - arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
   StarAlignerBatchComputeEnvironment:
     Type: AWS::Batch::ComputeEnvironment
     Properties:
@@ -37,3 +39,38 @@ Resources:
         - subnet-02d9a3801a1a594c9
         SecurityGroupIds:
         - sg-0d680c8c9b336d91b
+  StarAlignerBatchJobDefinition:
+    Type: AWS::Batch::JobDefinition
+    Properties:
+      JobDefinitionName: StarAlignerfargateJob
+      PlatformCapabilities:
+      - FARGATE
+      Type: Container
+      ContainerProperties:
+        Image: public.ecr.aws/amazonlinux/amazonlinux:latest
+        ResourceRequirements:
+        - Type: VCPU
+          Value: '1'
+        - Type: MEMORY
+          Value: '2048'
+        Command:
+        - echo
+        - hello world
+        JobRoleArn:
+          Fn::GetAtt:
+          - StarAlignerBatchExecutionRole
+          - Arn
+        ExecutionRoleArn:
+          Fn::GetAtt:
+          - StarAlignerBatchExecutionRole
+          - Arn
+  StarAlignerBatchJobQueue:
+    Type: AWS::Batch::JobQueue
+    Properties:
+      JobQueueName: StarAlignerFargateJobQueue
+      Priority: 1
+      ComputeEnvironmentOrder:
+      - Order: 1
+        ComputeEnvironment:
+          Ref: StarAlignerBatchComputeEnvironment
+      State: ENABLED
