@@ -23,6 +23,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        
   StarAlignerBatchComputeEnvironment:
     Type: AWS::Batch::ComputeEnvironment
     Properties:
@@ -46,7 +47,7 @@ Resources:
         - FARGATE
       Type: Container
       ContainerProperties:
-        Image: public.ecr.aws/amazonlinux/amazonlinux:latest
+        Image: 975049994824.dkr.ecr.eu-north-1.amazonaws.com/star-aligner-repo:latest
         ResourceRequirements:
           - Type: VCPU
             Value: "1"
@@ -67,3 +68,29 @@ Resources:
         - Order: 1
           ComputeEnvironment: !Ref StarAlignerBatchComputeEnvironment
       State: ENABLED
+
+   StarAlignerECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: star-aligner-repo  
+      ImageScanningConfiguration:
+        ScanOnPush: true  
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Expire untagged images after 30 days",
+                "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 30
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
