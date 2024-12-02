@@ -1,0 +1,189 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-north-1:975049994824:generatedTemplate/a97073d6-2b99-44e0-8801-70fefa44b9dd"
+Resources:
+ BatchJobQueue00jobqueuemyfargatejobqueue00ecCc5:
+    UpdateReplacePolicy: "Retain"
+    DeletionPolicy: "Retain"
+    Type: AWS::Batch::JobQueue
+    Properties:
+      ComputeEnvironmentOrder:
+        - Order: 1
+          ComputeEnvironment:
+            Ref: "BatchComputeEnvironment00computeenvironmentmycomputeenvironment00YDZiU"
+          
+      Priority: 1
+      State: "ENABLED"
+      JobQueueName: "my-fargate-job-queue"
+      Tags: {}
+  IAMRole00ecsTaskExecutionRole00Sr1vx:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+      - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+      MaxSessionDuration: 3600
+      RoleName: "ecsTaskExecutionRole"
+      Description: "Allows ECS tasks to call AWS services on your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ecs-tasks.amazonaws.com"
+          Sid: ""
+  ECRRepository00myawsbatchcontainer00CEEqg:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECR::Repository"
+    DeletionPolicy: "Retain"
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: false
+      RepositoryName: "my-aws-batch-container"
+      EncryptionConfiguration:
+        EncryptionType: "AES256"
+      Tags: []
+      ImageTagMutability: "MUTABLE"
+  ECSClusterCapacityProviderAssociations00AWSBatchmycomputeenvironment2b519b8a56993660a133a610b28a47a500flZwA:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::ClusterCapacityProviderAssociations"
+    DeletionPolicy: "Retain"
+    Properties:
+      CapacityProviders:
+      - "FARGATE"
+      Cluster: "AWSBatch-my-compute-environment-2b519b8a-5699-3660-a133-a610b28a47a5"
+      DefaultCapacityProviderStrategy:
+      - Base: 0
+        Weight: 1
+        CapacityProvider: "FARGATE"
+  BatchComputeEnvironment00computeenvironmentmycomputeenvironment00YDZiU:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Batch::ComputeEnvironment"
+    DeletionPolicy: "Retain"
+    Properties:
+      Type: "MANAGED"
+      ServiceRole:
+        Fn::GetAtt:
+        - "IAMRole00AWSServiceRoleForBatch00LZ4cU"
+        - "Arn"
+      ComputeEnvironmentName: "my-compute-environment"
+      ComputeResources:
+        Subnets:
+        - Ref: "EC2Subnet00subnet0639d80feade9df5400JyCKs"
+        - Ref: "EC2Subnet00subnet02d9a3801a1a594c900Yplr5"
+        - Ref: "EC2Subnet00subnet05ec9bb9379172a6d00AE6xE"
+        Type: "FARGATE"
+        InstanceTypes: []
+        Ec2Configuration: []
+        SecurityGroupIds:
+        - "sg-0d680c8c9b336d91b"
+        MaxvCpus: 4
+      State: "ENABLED"
+ 
+  ECSCluster00AWSBatchmycomputeenvironment2b519b8a56993660a133a610b28a47a500IHZH9:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::Cluster"
+    DeletionPolicy: "Retain"
+    Properties:
+      CapacityProviders:
+      - "FARGATE"
+      ClusterName: "AWSBatch-my-compute-environment-2b519b8a-5699-3660-a133-a610b28a47a5"
+      ClusterSettings:
+      - Value: "disabled"
+        Name: "containerInsights"
+      DefaultCapacityProviderStrategy:
+      - Weight: 1
+        Base: 0
+        CapacityProvider: "FARGATE"
+      Tags:
+      - Value: "batch"
+        Key: "AWSBatchServiceTag"
+  EC2Subnet00subnet02d9a3801a1a594c900Yplr5:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Retain"
+    Properties:
+      VpcId: "vpc-0551dbb6915f041ec"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "eun1-az1"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "172.31.16.0/20"
+      Ipv6Native: false
+      Tags: []
+  EC2Subnet00subnet0639d80feade9df5400JyCKs:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Retain"
+    Properties:
+      VpcId: "vpc-0551dbb6915f041ec"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "eun1-az2"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "172.31.32.0/20"
+      Ipv6Native: false
+      Tags: []
+  EC2Subnet00subnet05ec9bb9379172a6d00AE6xE:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Retain"
+    Properties:
+      VpcId: "vpc-0551dbb6915f041ec"
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      AvailabilityZoneId: "eun1-az3"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "172.31.0.0/20"
+      Ipv6Native: false
+      Tags: []
+  IAMRole00AWSServiceRoleForBatch00LZ4cU:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/batch.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/BatchServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForBatch"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "batch.amazonaws.com"
+  S3Bucket00myawsbatchbucket00ZUGfV:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "my-aws-batch-bucket"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "AES256"

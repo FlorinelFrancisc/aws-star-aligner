@@ -2,6 +2,16 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
+  StarAlignerBatchJobQueue:
+    Type: AWS::Batch::JobQueue
+    Properties:
+      JobQueueName: StarAlignerFargateJobQueue
+      Priority: 1
+      ComputeEnvironmentOrder:
+        - Order: 1
+          ComputeEnvironment: !Ref StarAlignerBatchComputeEnvironment
+      State: ENABLED
+
   StarAlignerBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -16,14 +26,13 @@ Resources:
           - Effect: Allow
             Principal:
               Service:
-                - batch.amazonaws.com
                 - ecs-tasks.amazonaws.com
             Action:
               - sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole
-        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-        
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+
   StarAlignerBatchComputeEnvironment:
     Type: AWS::Batch::ComputeEnvironment
     Properties:
@@ -56,25 +65,16 @@ Resources:
         Command:
           - "echo"
           - "hello world"
-        JobRoleArn: !GetAtt StarAlignerBatchExecutionRole.Arn
         ExecutionRoleArn: !GetAtt StarAlignerBatchExecutionRole.Arn
+        NetworkConfiguration:
+          AssignPublicIp: ENABLED
 
-  StarAlignerBatchJobQueue:
-    Type: AWS::Batch::JobQueue
-    Properties:
-      JobQueueName: StarAlignerFargateJobQueue
-      Priority: 1
-      ComputeEnvironmentOrder:
-        - Order: 1
-          ComputeEnvironment: !Ref StarAlignerBatchComputeEnvironment
-      State: ENABLED
-
-   StarAlignerECRRepository:
+  StarAlignerECRRepository:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: star-aligner-repo  
+      RepositoryName: star-aligner-repo-unique
       ImageScanningConfiguration:
-        ScanOnPush: true  
+        ScanOnPush: true
       LifecyclePolicy:
         LifecyclePolicyText: |
           {
