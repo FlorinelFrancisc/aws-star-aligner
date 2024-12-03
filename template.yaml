@@ -26,6 +26,7 @@ Resources:
           - Effect: Allow
             Principal:
               Service:
+                - batch.amazonaws.com
                 - ecs-tasks.amazonaws.com
             Action:
               - sts:AssumeRole
