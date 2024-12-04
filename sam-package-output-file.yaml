@@ -20,7 +20,7 @@ Resources:
         Fn::Sub: star-aligner-files-${AWS::AccountId}
     Metadata:
       SamResourceId: StarAlignerBucket
-  StarAlignerBatchExecutionRole:
+  StarAlignerJobDefinitionExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -29,18 +29,17 @@ Resources:
         - Effect: Allow
           Principal:
             Service:
-            - batch.amazonaws.com
             - ecs-tasks.amazonaws.com
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
     Metadata:
-      SamResourceId: StarAlignerBatchExecutionRole
+      SamResourceId: StarAlignerJobDefinitionExecutionRole
   StarAlignerBatchComputeEnvironment:
     Type: AWS::Batch::ComputeEnvironment
     Properties:
-      ComputeEnvironmentName: StarAlignerComputeEnvironment
+      ComputeEnvironmentName: StarAlignerBatchComputeEnvironment
       Type: MANAGED
       ComputeResources:
         Type: FARGATE
@@ -71,7 +70,7 @@ Resources:
         - hello world
         ExecutionRoleArn:
           Fn::GetAtt:
-          - StarAlignerBatchExecutionRole
+          - StarAlignerJobDefinitionExecutionRole
           - Arn
         NetworkConfiguration:
           AssignPublicIp: ENABLED
