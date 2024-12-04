@@ -34,8 +34,7 @@ Resources:
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/CloudWatchFullAccess
-      - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      - arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole
     Metadata:
       SamResourceId: StarAlignerBatchExecutionRole
   StarAlignerBatchComputeEnvironment:
@@ -43,10 +42,6 @@ Resources:
     Properties:
       ComputeEnvironmentName: StarAlignerComputeEnvironment
       Type: MANAGED
-      ServiceRole:
-        Fn::GetAtt:
-        - StarAlignerBatchExecutionRole
-        - Arn
       ComputeResources:
         Type: FARGATE
         MaxvCpus: 16
@@ -65,7 +60,7 @@ Resources:
       - FARGATE
       Type: Container
       ContainerProperties:
-        Image: 975049994824.dkr.ecr.eu-north-1.amazonaws.com/star-aligner-repo:latest
+        Image: public.ecr.aws/amazonlinux/amazonlinux:latest
         ResourceRequirements:
         - Type: VCPU
           Value: '1'
@@ -80,6 +75,9 @@ Resources:
           - Arn
         NetworkConfiguration:
           AssignPublicIp: ENABLED
+        RuntimePlatform:
+          OperatingSystemFamily: LINUX
+          CpuArchitecture: X86_64
     Metadata:
       SamResourceId: StarAlignerBatchJobDefinition
   StarAlignerECRRepository:
