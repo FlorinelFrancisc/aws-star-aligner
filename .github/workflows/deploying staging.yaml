@@ -1,4 +1,4 @@
-name: Deployng Staging
+name: deploying staging
 
 on:
   push:
@@ -61,15 +61,16 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      - name: Debug AWS Credentials
+        run: |
+          echo "Checking AWS credentials..."
+          aws sts get-caller-identity || echo "Failed to authenticate with AWS"
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.STAGING_REGION }}
-      - name: Debug AWS Credentials
-        run: aws sts get-caller-identity
-
       - name: Validate SAM Templates
         run: sam validate
       - name: Build SAM Application
