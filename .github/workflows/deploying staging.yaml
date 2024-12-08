@@ -1,5 +1,4 @@
-name: CI/CD Workflow for Beginner
-
+name: Deploying staging
 on:
   push:
     branches:
@@ -16,7 +15,7 @@ permissions:
 
 env:
   STAGING_REGION: eu-north-1
-  ARTIFACT_BUCKET: qlucore-ci-artifacts-eu-north-1
+  ARTIFACT_BUCKET: star-aligner-files-${AWS::AccountId}
 
 jobs:
   format-checker:
@@ -64,8 +63,11 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ROLE }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.STAGING_REGION }}
+          role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ROLE }}
+          role-session-name: GitHubActionsSession
       - name: Validate SAM Templates
         run: sam validate
       - name: Build SAM Application
@@ -94,8 +96,11 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ROLE }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.STAGING_REGION }}
+          role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ROLE }}
+          role-session-name: GitHubActionsSession
       - name: Build SAM Application
         run: sam build
       - name: Package Application
