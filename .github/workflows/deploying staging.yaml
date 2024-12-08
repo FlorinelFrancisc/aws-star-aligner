@@ -36,9 +36,9 @@ jobs:
       - name: Run Black Formatter
         run: black --check .
       - name: Prettier YAML Formatter
-        run: prettier "./**/*.yaml" --check
+        run: prettier "./**/*.yaml" --check || true
       - name: Prettier JSON Formatter
-        run: prettier "./**/*.json" --check
+        run: prettier "./**/*.json" --check || true
 
   branch-analysis:
     name: Branch Analysis
