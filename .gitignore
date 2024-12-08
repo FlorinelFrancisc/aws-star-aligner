@@ -1,1 +1,2 @@
 ﻿.aws-sam/build/template.yaml
+sam-package-output-file.yaml
