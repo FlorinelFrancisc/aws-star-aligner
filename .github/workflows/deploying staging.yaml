@@ -64,12 +64,13 @@ jobs:
       - name: Debug AWS Credentials
         run: |
           echo "Checking AWS credentials..."
+          echo "key id is:" + ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws sts get-caller-identity || echo "Failed to authenticate with AWS"
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: AKIA6GBMCGJEOLWNTSRT
+          aws-secret-access-key: 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
           aws-region: ${{ env.STAGING_REGION }}
       - name: Validate SAM Templates
         run: sam validate
