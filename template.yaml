@@ -31,7 +31,6 @@ Resources:
               - sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-
       Policies:
         - PolicyName: StarAlignerS3AccessPolicy
           PolicyDocument:
