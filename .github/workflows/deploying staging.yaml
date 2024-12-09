@@ -62,17 +62,17 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Debug AWS Credentials
-        run: |
-          echo "Checking AWS credentials..."
-          echo "key id is:" + ${{ vars.AWS_ACCESS_KEY_ID }}
-          aws sts get-caller-identity || echo "Failed to authenticate with AWS"
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.STAGING_REGION }}
+      - name: Debug AWS Credentials
+        run: |
+          echo "Checking AWS credentials..."
+          echo "key id is:" + ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws sts get-caller-identity || echo "Failed to authenticate with AWS"
       - name: Validate SAM Templates
         run: sam validate
       - name: Build SAM Application
@@ -87,6 +87,7 @@ jobs:
           sam deploy \
             --template-file packaged.yaml \
             --stack-name my-app-stack \
+            --capabilities CAPABILITY_IAM \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             ${{ needs.branch-analysis.outputs.dryrun-param }}
