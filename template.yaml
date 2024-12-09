@@ -49,7 +49,7 @@ Resources:
   StarAlignerBatchComputeEnvironment:
     Type: AWS::Batch::ComputeEnvironment
     Properties:
-      ComputeEnvironmentName: StarAlignerBatchComputeEnvironment
+      ComputeEnvironmentName: StarAlignerBatchComputeEnvironment2
       Type: MANAGED
       ComputeResources:
         Type: FARGATE
