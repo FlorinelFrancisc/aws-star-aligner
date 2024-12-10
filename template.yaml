@@ -68,7 +68,7 @@ Resources:
         - FARGATE
       Type: Container
       ContainerProperties:
-        Image: 975049994824.dkr.ecr.eu-north-1.amazonaws.com/star-aligner-repo-unique-3:v1.0
+        Image: 975049994824.dkr.ecr.eu-north-1.amazonaws.com/star-aligner-repo@sha256:52cecd1d56a946f67a5803c49b9cb9a6c984887ef722c8c7a3b41fe6facb5939
         ResourceRequirements:
           - Type: VCPU
             Value: "1"
