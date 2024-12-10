@@ -1,6 +1,11 @@
-# Use Amazon Linux as the base image
-FROM public.ecr.aws/amazonlinux/amazonlinux:latest
+# Use the AWS CLI image as the base image
+FROM amazon/aws-cli:latest
 
-RUN ls
-# Set the default command to echo "hello world"
-CMD ["echo", "hello world!"]
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the local README file into the container (optional if you want to package it inside the container)
+COPY README /app/README
+
+# Default command to copy the README to an S3 bucket
+CMD ["aws", "s3", "cp", "/app/README", "s3://star-aligner-files-975049994824/"]
