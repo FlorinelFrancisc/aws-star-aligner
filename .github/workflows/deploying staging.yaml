@@ -120,3 +120,19 @@ jobs:
             --stack-name star-aligner \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset
+            - name: Log in to Amazon ECR
+            id: login-ecr
+            uses: aws-actions/amazon-ecr-login@v2
+      - name: Build Docker Image
+        run: |
+          docker build -t my-aws-cli-image .
+          docker tag my-aws-cli-image:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.STAGING_REGION }}.amazonaws.com/my-aws-cli-image:latest
+      - name: Push Docker Image to Amazon ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.STAGING_REGION }}.amazonaws.com/my-aws-cli-image:latest
+      - name: Update ECS Service
+        run: |
+          aws ecs update-service \
+            --cluster my-cluster \
+            --service my-service \
+            --force-new-deployment
