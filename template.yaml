@@ -31,6 +31,19 @@ Resources:
               - sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  StarAlignerJobDefinitionJobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - sts:AssumeRole
       Policies:
         - PolicyName: StarAlignerS3AccessPolicy
           PolicyDocument:
@@ -68,7 +81,7 @@ Resources:
         - FARGATE
       Type: Container
       ContainerProperties:
-        Image: 975049994824.dkr.ecr.eu-north-1.amazonaws.com/star-aligner-repo@sha256:52cecd1d56a946f67a5803c49b9cb9a6c984887ef722c8c7a3b41fe6facb5939
+        Image: 975049994824.dkr.ecr.eu-north-1.amazonaws.com/star-aligner-repo-975049994824:latest
         ResourceRequirements:
           - Type: VCPU
             Value: "1"
@@ -76,6 +89,7 @@ Resources:
             Value: "2048"
 
         ExecutionRoleArn: !GetAtt StarAlignerJobDefinitionExecutionRole.Arn
+        JobRoleArn: !GetAtt StarAlignerJobDefinitionJobRole.Arn
         NetworkConfiguration:
           AssignPublicIp: ENABLED
         RuntimePlatform:
