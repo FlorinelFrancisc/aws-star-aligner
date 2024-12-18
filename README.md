@@ -2,6 +2,8 @@
 
 This repository hosts the infrastructure and CI/CD pipeline for the **Star Aligner** application. The solution leverages AWS services such as S3, ECR, Batch, and SAM for a containerized, serverless batch job workflow.
 
+This project uses the [STAR RNA-seq aligner](https://github.com/alexdobin/STAR) to process RNA-sequencing data in a scalable, serverless environment.
+
 ## Table of Contents
 
 - [Overview](#overview)
