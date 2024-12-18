@@ -110,11 +110,9 @@ This pipeline ensures safe and consistent deployments, preventing accidental cha
 
 **Dockerfile:**
 
-- Base: `amazon/aws-cli:latest`
-- Copies `README.md` into `/app/README`.
-- Defaults to copying the `README` into the S3 bucket as a proof-of-concept operation.
-
-This image can be extended or replaced with the actual application logic needed by your batch jobs.
+- Pulls input data from S3.
+- Processes the data (e.g., running alignment tasks using STAR).
+- Writes processed results back to S3.
 
 ## Prerequisites
 
